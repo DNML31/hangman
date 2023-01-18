@@ -27,32 +27,40 @@ end
 word_spaces = word.length
 guess_this_word = Word.new(word, word_spaces)
 
-
 def play_game(secret_word)
+
+  letters = Range.new('a','z').to_a
+  numbers = Range.new('0','9').to_a
   # want it to say this message and show blank spaces underneath
   print "\nLet's play hangman! Guess a letter:  "
 
-  secret_word 
-  # creates the blanks above the greeting message
+  secret_word
+  # method creates the blanks above the greeting message
 
   guess = gets.chomp
 
-  if guess.length > 1
+  if numbers.include?(guess)
+    puts "not a letter"
+    until letters.include?(guess) do
+      puts "Choose a letter."
+      guess = gets.chomp
+    end
+
+  elsif guess.length > 1
     until guess.length == 1 do
       puts "Choose only one letter."
       guess = gets.chomp
+
+      until letters.include?(guess) do
+        puts "Choose a letter."
+        guess = gets.chomp
+      end
     end
-    # insert check method (needs to re-display current state of the game
-  elsif guess.class != String
-    puts "not a letter"
-    until guess.class == String do
-      puts "Choose a letter."
-    end
+
   else
     puts "checking..."
     # insert check method (needs to re-display current state of the game
   end
-  
 end
 
 play_game(guess_this_word.set_up)
