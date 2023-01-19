@@ -6,11 +6,7 @@ class Word
 
   # create blank spaces and an array of blank spaces
   def blank_spaces
-    spaces = []
-    @spaces.times do
-      spaces.push("_ ")
-      print "_ "
-    end
+    spaces = @spaces.times do print "_ " end
   end
 
   # return the word
@@ -39,11 +35,13 @@ def find_index(guess, word)
 end
 
 def play_game(word, word_spaces)
-  p word_spaces
-  p word
   letters = Range.new('a','z').to_a
   numbers = Range.new('0','9').to_a
+  
   word_array = word.split(//)
+
+  p word_spaces
+  p word
 
   print "\nLet's play hangman! Guess a letter:  "
   guess = gets.chomp
@@ -72,9 +70,14 @@ def play_game(word, word_spaces)
 
   if word_array.include?(guess)
     puts 'correct'
+    index = find_index(guess, word_array)
 
-    find_index(guess, word_array)
-    # this method returns the index of the word_array where the guess is
+    word_array[index.to_i] = guess
+  
+    # changes first element in word_array to the guessed letter, no matter what
+    # need to be changing blank_spaces, not word_array
+    p word_spaces.to_a
+    # word_spaces is an integer...wtf?
   else
     puts 'incorrect'
     # if incorrect letter, display a message
