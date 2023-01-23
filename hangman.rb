@@ -31,6 +31,9 @@ def change_spaces(spaces, index, guess)
   spaces.times do spaces_array.push("-") end
   spaces_array[index] = guess
   print spaces_array.join(' ')
+  # need to edit method to be able to take multiple indexes
+  # prints two different sets with different spaces/letters filled in
+  # if the word is "test" --> t---/---t
 end
 
 def play_game(word, word_spaces, spaces)
@@ -42,7 +45,7 @@ def play_game(word, word_spaces, spaces)
   word_array = word.split(//)
 
   # p word_spaces
-  # p word_array
+  p word_array
 
   print "\nLet's play hangman! Guess a letter:  "
   guess = gets.chomp
@@ -69,10 +72,16 @@ def play_game(word, word_spaces, spaces)
   end
 
   if word_array.include?(guess)
-
     puts 'correct'
-    index = word_array.index(guess)
-    change_spaces(spaces, index, guess)
+    # index = word_array.index(guess)
+    # change_spaces(spaces, index, guess)
+    word_array.each_with_index do |letter, index|
+      if letter == guess
+        change_spaces(spaces, index, guess)
+      end
+    end
+
+    # fruits.each_with_index { |fruit, index| puts fruit if index.even? }
 
   else
     puts 'incorrect'
