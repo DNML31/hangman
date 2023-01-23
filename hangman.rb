@@ -26,27 +26,40 @@ def find_index(guess, word)
   print (word.to_a.index {|element| element == guess})
 end
 
-def change_spaces(spaces, word, guess)
+# def change_spaces(spaces, word, guess)
+#   word.each_with_index do |letter, index|
+#     if letter == guess
+#       spaces[index] = guess
+#     end
+#   end
+#   print spaces.join(' ')
+# end
 
-  word.each_with_index do |letter, index|
-    if letter == guess
-      spaces[index] = guess
+def check_guess(spaces_array, word_array, guess)
+  if word_array.include?(guess)
+    puts 'correct'
+
+    word_array.each_with_index do |letter, index|
+      if letter == guess
+        spaces_array[index] = guess
+      end
     end
-  end
-  print spaces.join(' ')
 
+    result = spaces_array.join(' ')
+    print result
+  else
+    puts "incorrect. #{tries} guesses left... try again."
+  end
 end
 
 def play_game(word, word_spaces, spaces)
+  tries = 10
   letters = Range.new('a','z').to_a
   numbers = Range.new('0','9').to_a
-
-  tries = 10
-
   word_array = word.split(//)
 
-  # p word_spaces
   p word_array
+  # ["w", "o", "r", "d"]
 
   print "\nLet's play hangman! Guess a letter:  "
   guess = gets.chomp
@@ -74,24 +87,20 @@ def play_game(word, word_spaces, spaces)
 
   spaces_array = []
   spaces.times do spaces_array.push("-") end
+  # ["-", "-", "-", "-"]
 
-  if word_array.include?(guess)
-    puts 'correct'
-    change_spaces(spaces_array, word_array, guess)
+  # need to loop this method with the option to change 'guess' and keep
+  # the updated 'word_array' and 'spaces_array' arrays
+  
+  # UNTIL tries == 0 or user completes the word.
+  # *** decrement 'tries' var
 
-  else
-    puts 'incorrect'
+  # until tries == 0 || word_array == check_guess(spaces_array, word_array, guess).split
+  #   check_guess(....)
+  #   tries -= 1
+  # end
 
-    tries -= 1
-    print tries
-
-    until tries == 0
-      play_game(word, word_spaces, spaces)
-    end
-    # if incorrect letter, display a message
-    # -= number of guesses left
-    # repeat guess sequence
-  end
+  check_guess(spaces_array, word_array, guess)
 
 end
 
