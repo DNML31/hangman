@@ -8,7 +8,7 @@ class Word
   end
 
   def blank_spaces
-    @spaces.times do print('_ ') end
+    @spaces.times do print('_') end
   end
 end
 
@@ -26,10 +26,6 @@ end
 spaces = word.length
 solve_me = Word.new(word, spaces)
 
-def find_index(guess, word)
-  print (word.to_a.index {|element| element == guess})
-end
-
 def check_guess(spaces_array, word_array, guess)
 
   wrong_letters = []
@@ -44,19 +40,21 @@ def check_guess(spaces_array, word_array, guess)
       end
     end
 
-    result = spaces_array.join(' ')
-    print result
   else
     wrong_letters.push(guess)
     print "**********"
     puts "\nIncorrect. Try again."
     puts "\nAlready guessed letters - #{wrong_letters.join(' ')}\n"
-    print spaces_array.join(' ')
+
   end
+
+  result = spaces_array.join('')
+  print result
+  # print result.class
+
 end
 
 def play_game(word, word_spaces, spaces)
-  tries = 11
   letters = Range.new('a','z').to_a
   numbers = Range.new('0','9').to_a
   word_array = word.split(//)
@@ -66,23 +64,25 @@ def play_game(word, word_spaces, spaces)
 
   spaces_array = []
   spaces.times do spaces_array.push("-") end
-  # ["-", "-", "-", "-"]
+    # ["-", "-", "-", "-"]
 
-  # loop starting from here...
+    # loop starting from here...
   loop do
-    # only decrement if guess is wrong
-    tries -= 1
+    tries = 10
     print "\n\nTries left: #{tries}. Guess a letter:  "
     # need to remember ALL already guessed letters
     guess = gets.chomp
 
     if numbers.include?(guess)
       puts "Not a letter..."
+
       until letters.include?(guess) do
         puts "Choose a letter: "
         guess = gets.chomp
       end
+
     elsif guess.length > 1
+
       until guess.length == 1 do
         puts "Choose only ONE letter."
         guess = gets.chomp
@@ -92,15 +92,26 @@ def play_game(word, word_spaces, spaces)
           guess = gets.chomp
         end
       end
+
     else
       current = check_guess(spaces_array, word_array, guess)
-      current
+      print current.to_s
+      # current is a Nilclass - all referneces to this var are not working
+      # print word_array.join('')
+    end
+
+    if word.include?(guess)
+      puts "don't decrement"
+    elsif word.split.none?(guess)
+      puts "decrement"
+      # print tries -= 1
+      # decrement won't continue
     end
 
     # loop condition
-    if tries == 1
+    if tries == 0
       break
-    elsif word_array == current
+    elsif word_array.to_s == current.to_s
       break
     end
 
