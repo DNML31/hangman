@@ -8,9 +8,13 @@ class Word
   end
 
   def blank_spaces
-    @spaces.times do print "_ " end
+    @spaces.times do print('_ ') end
   end
 end
+
+print "************************"
+puts "\nLet's play hangman! You will have 10 tries to figure out the mystery word.
+\nInput only ONE alphabetical letter per turn (no numbers or symbols).\n\n"
 
 open_txt = File.open('google-10000-english-no-swears.txt')
 open_txt = open_txt.readlines(chomp: true) # array
@@ -26,18 +30,13 @@ def find_index(guess, word)
   print (word.to_a.index {|element| element == guess})
 end
 
-# def change_spaces(spaces, word, guess)
-#   word.each_with_index do |letter, index|
-#     if letter == guess
-#       spaces[index] = guess
-#     end
-#   end
-#   print spaces.join(' ')
-# end
-
 def check_guess(spaces_array, word_array, guess)
+
+  wrong_letters = []
+
   if word_array.include?(guess)
-    puts 'correct'
+    print "**********"
+    puts "\nCorrect."
 
     word_array.each_with_index do |letter, index|
       if letter == guess
@@ -48,12 +47,16 @@ def check_guess(spaces_array, word_array, guess)
     result = spaces_array.join(' ')
     print result
   else
-    puts "incorrect. #{tries} guesses left... try again."
+    wrong_letters.push(guess)
+    print "**********"
+    puts "\nIncorrect. Try again."
+    puts "\nAlready guessed letters - #{wrong_letters.join(' ')}\n"
+    print spaces_array.join(' ')
   end
 end
 
 def play_game(word, word_spaces, spaces)
-  tries = 10
+  tries = 11
   letters = Range.new('a','z').to_a
   numbers = Range.new('0','9').to_a
   word_array = word.split(//)
@@ -61,46 +64,48 @@ def play_game(word, word_spaces, spaces)
   p word_array
   # ["w", "o", "r", "d"]
 
-  print "\nLet's play hangman! Guess a letter:  "
-  guess = gets.chomp
-
-  if numbers.include?(guess)
-    puts "not a letter"
-    until letters.include?(guess) do
-      puts "Choose a letter."
-      guess = gets.chomp
-    end
-  elsif guess.length > 1
-    until guess.length == 1 do
-      puts "Choose only one letter."
-      guess = gets.chomp
-
-      until letters.include?(guess) do
-        puts "Choose a letter."
-        guess = gets.chomp
-      end
-    end
-  else
-    puts "checking..."
-    # insert check method (needs to re-display current state of the game
-  end
-
   spaces_array = []
   spaces.times do spaces_array.push("-") end
   # ["-", "-", "-", "-"]
 
-  # need to loop this method with the option to change 'guess' and keep
-  # the updated 'word_array' and 'spaces_array' arrays
-  
-  # UNTIL tries == 0 or user completes the word.
-  # *** decrement 'tries' var
+  # loop starting from here...
+  loop do
+    # only decrement if guess is wrong
+    tries -= 1
+    print "\n\nTries left: #{tries}. Guess a letter:  "
+    # need to remember ALL already guessed letters
+    guess = gets.chomp
 
-  # until tries == 0 || word_array == check_guess(spaces_array, word_array, guess).split
-  #   check_guess(....)
-  #   tries -= 1
-  # end
+    if numbers.include?(guess)
+      puts "Not a letter..."
+      until letters.include?(guess) do
+        puts "Choose a letter: "
+        guess = gets.chomp
+      end
+    elsif guess.length > 1
+      until guess.length == 1 do
+        puts "Choose only ONE letter."
+        guess = gets.chomp
 
-  check_guess(spaces_array, word_array, guess)
+        until letters.include?(guess) do
+          puts "Choose a letter."
+          guess = gets.chomp
+        end
+      end
+    else
+      current = check_guess(spaces_array, word_array, guess)
+      current
+    end
+
+    # loop condition
+    if tries == 1
+      break
+    elsif word_array == current
+      break
+    end
+
+  end
+  # ...to here...
 
 end
 
