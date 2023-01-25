@@ -107,7 +107,7 @@ def play_game(word, word_spaces, spaces)
       wrong_letters.push(guess)
     end
 
-    puts "\n\nincorrect letters - #{wrong_letters.join(' ')}"
+    puts "\n\nincorrect letters - #{wrong_letters.uniq.join(' ')}"
     # loop condition
     if tries == 0
       break
