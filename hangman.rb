@@ -8,7 +8,7 @@ class Word
   end
 
   def blank_spaces
-    @spaces.times do print('_') end
+    @spaces.times do print('_ ') end
   end
 end
 
@@ -28,11 +28,13 @@ solve_me = Word.new(word, spaces)
 
 def check_guess(spaces_array, word_array, guess)
 
-  wrong_letters = []
+  # wrong_letters = []
+  # wrong_letters keeps getting reassigned at the start of this method
+  # everytime it is called, it is emptied
 
   if word_array.include?(guess)
-    print "**********"
-    puts "\nCorrect."
+    print "\n**********\n"
+    puts "\nCORRECT.\n"
 
     word_array.each_with_index do |letter, index|
       if letter == guess
@@ -41,16 +43,15 @@ def check_guess(spaces_array, word_array, guess)
     end
 
   else
-    wrong_letters.push(guess)
-    print "**********"
-    puts "\nIncorrect. Try again."
-    puts "\nAlready guessed letters - #{wrong_letters.join(' ')}\n"
-
+    # wrong_letters.push(guess)
+    print "\n**********\n"
+    puts "\nINCORRECT. TRY AGAIN.\n"
   end
 
-  result = spaces_array.join('')
+  # puts "incorrect letters - #{wrong_letters.join(' ')}\n\n"
+
+  result = spaces_array.join(' ')
   print result
-  # print result.class
 
 end
 
@@ -60,29 +61,26 @@ def play_game(word, word_spaces, spaces)
   word_array = word.split(//)
 
   p word_array
-  # ["w", "o", "r", "d"]
 
   spaces_array = []
   spaces.times do spaces_array.push("-") end
-    # ["-", "-", "-", "-"]
 
-    # loop starting from here...
+  tries = 10
+
+  wrong_letters = []
+
   loop do
-    tries = 10
-    print "\n\nTries left: #{tries}. Guess a letter:  "
+    print "\nTries left: #{tries}. Guess a letter:  "
     # need to remember ALL already guessed letters
     guess = gets.chomp
 
     if numbers.include?(guess)
       puts "Not a letter..."
-
       until letters.include?(guess) do
         puts "Choose a letter: "
         guess = gets.chomp
       end
-
     elsif guess.length > 1
-
       until guess.length == 1 do
         puts "Choose only ONE letter."
         guess = gets.chomp
@@ -94,6 +92,8 @@ def play_game(word, word_spaces, spaces)
       end
 
     else
+      # because current keeps getting reassigned within the loop, the 
+      # wrong_letters array keeps resetting?
       current = check_guess(spaces_array, word_array, guess)
       print current.to_s
       # current is a Nilclass - all referneces to this var are not working
@@ -101,13 +101,13 @@ def play_game(word, word_spaces, spaces)
     end
 
     if word.include?(guess)
-      puts "don't decrement"
+      puts ''
     elsif word.split.none?(guess)
-      puts "decrement"
-      # print tries -= 1
-      # decrement won't continue
+      tries -= 1
+      wrong_letters.push(guess)
     end
 
+    puts "\n\nincorrect letters - #{wrong_letters.join(' ')}"
     # loop condition
     if tries == 0
       break
@@ -117,7 +117,6 @@ def play_game(word, word_spaces, spaces)
 
   end
   # ...to here...
-
 end
 
 play_game(solve_me.word, solve_me.blank_spaces, solve_me.spaces)
