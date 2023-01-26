@@ -27,7 +27,7 @@ spaces = word.length
 solve_me = Word.new(word, spaces)
 
 def check_guess(spaces_array, word_array, guess)
-
+# ( [-,-,-,-], [t,e,s,t], "t")
   if word_array.include?(guess)
     print "\n**********\n"
     puts "\nCORRECT.\n"
@@ -44,11 +44,12 @@ def check_guess(spaces_array, word_array, guess)
   end
 
   result = spaces_array.join(' ')
-  print result
+  print result.to_s
 
 end
 
 def play_game(word, word_spaces, spaces)
+# ("test", _ _ _ _ , 4)
   letters = Range.new('a','z').to_a
   numbers = Range.new('0','9').to_a
   word_array = word.split(//)
@@ -105,11 +106,15 @@ def play_game(word, word_spaces, spaces)
 
     puts "\n\nincorrect letters - #{wrong_letters.uniq.join(' ')}"
 
+    # puts "#{word_array.join('')} is word array"
+    # puts "#{current} is current"
+
     # loop condition
     if tries == 0
       puts "You lose. The word was #{word_array.join('').upcase}."
       break
-    elsif word_array.to_s == current.to_s
+    elsif word_array == spaces_array
+      puts "You win! You solved the word!"
       break
     end
 
