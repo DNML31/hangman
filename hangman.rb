@@ -1,6 +1,7 @@
+require 'yaml'
+
 class Word
-  attr_reader :word
-  attr_reader :spaces
+  attr_reader :word, :spaces
 
   def initialize(word, spaces)
     @word = word
@@ -10,6 +11,28 @@ class Word
   def blank_spaces
     @spaces.times do print('_ ') end
   end
+end
+
+class Game
+  attr_accessor :word, :spaces, :solve_me, :correct_letters, :wrong_letters
+  # need to be able to read and write
+
+  def initialize(word, spaces, solve_me, correct_letters, wrong_letters)
+    @word = word
+    @spaces = spaces
+    @solve_me = solve_me
+    @correct_letters = correct_letters
+    @wrong_letters = wrong_letters
+  end
+
+  def save(x)
+    YAML.dump(x)
+  end
+
+  def load(x)
+    YAML.load(x)
+  end
+
 end
 
 print "************************"
@@ -26,9 +49,12 @@ end
 spaces = word.length
 solve_me = Word.new(word, spaces)
 
+game_stats = Game.new()
+
+
 def check_guess(spaces_array, word_array, guess)
   # ( [-,-,-,-], [t,e,s,t], "t")
-  
+
   if word_array.include?(guess)
     print "\n**********\n"
     puts "\nCORRECT.\n"
@@ -63,6 +89,8 @@ def play_game(word, word_spaces, spaces)
 
   correct_letters = []
   wrong_letters = []
+
+  #save_game
 
   loop do
     print "\nTries left: #{tries}. Guess a letter:  "
