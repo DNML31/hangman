@@ -16,28 +16,30 @@ end
 class Game
   attr_accessor :word, :spaces, :solve_me, :correct_letters, :wrong_letters
   # need to be able to read and write
+  @@hash = {}
 
-  def initialize(word, spaces, solve_me, correct_letters, wrong_letters)
+  def initialize(word, spaces, correct_letters, wrong_letters)
     @word = word
     @spaces = spaces
-    @solve_me = solve_me
+    # @solve_me = solve_me
     @correct_letters = correct_letters
     @wrong_letters = wrong_letters
   end
 
-  def save(x)
-    YAML.dump(x)
+  def save
+    @@hash['word'] = @word
+    @@hash['spaces'] = @spaces
+    # @@hash['solve_me'] = @solve_me
+    @@hash['correct_letters'] = @correct_letters
+    @@hash['wrong_letters'] = @wrong_letters
+    puts @@hash
   end
 
-  def load(x)
-    YAML.load(x)
+  def load
+    puts @@hash
   end
 
 end
-
-print "************************"
-puts "\nLet's play hangman! You will have 10 tries to figure out the word.
-\nInput only ONE alphabetical letter per turn (no numbers or symbols).\n\n"
 
 open_txt = File.open('google-10000-english-no-swears.txt')
 open_txt = open_txt.readlines(chomp: true) # array
@@ -49,8 +51,9 @@ end
 spaces = word.length
 solve_me = Word.new(word, spaces)
 
-game_stats = Game.new()
-
+print "************************"
+puts "\nLet's play hangman! You will have 10 tries to figure out the word.
+\nInput only ONE alphabetical letter per turn (no numbers or symbols).\n\n"
 
 def check_guess(spaces_array, word_array, guess)
   # ( [-,-,-,-], [t,e,s,t], "t")
@@ -90,11 +93,21 @@ def play_game(word, word_spaces, spaces)
   correct_letters = []
   wrong_letters = []
 
-  #save_game
-
   loop do
+    print "\n* To save this game type 'save'."
+    print "\n** To load a previous game type 'load'."
     print "\nTries left: #{tries}. Guess a letter:  "
     guess = gets.chomp
+
+    if guess == 'save'
+      puts "This game will be saved to continue later."
+      game_hash = Game.new(word, spaces, correct_letters, wrong_letters)
+      game_hash.save
+      break
+    elsif guess == 'load'
+      # make sure saving in one game can be loaded into another 'game session'
+      game_hash.load
+    end
 
     while correct_letters.include?(guess) || wrong_letters.include?(guess)
       puts "\nYou've already guessed this letter. Try another: "
@@ -141,6 +154,7 @@ def play_game(word, word_spaces, spaces)
       break
     end
 
+    # puts game_hash
   end
   # end loop
 
