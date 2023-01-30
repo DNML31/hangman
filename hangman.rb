@@ -26,6 +26,7 @@ class Game
     @wrong_letters = wrong_letters
   end
 
+  # save method needs to serialize an object, not create/rewrite a hash
   def save
     @@hash['word'] = @word
     @@hash['spaces'] = @spaces
@@ -35,6 +36,7 @@ class Game
     puts @@hash
   end
 
+  # needs to deserialize data
   def load
     puts @@hash
   end
@@ -93,6 +95,13 @@ def play_game(word, word_spaces, spaces)
   correct_letters = []
   wrong_letters = []
 
+  game_hash = {
+    :word => '',
+    :spaces => '',
+    :correct_letters => '',
+    :wrong_letters => ''
+  }
+
   loop do
     print "\n* To save this game type 'save'."
     print "\n** To load a previous game type 'load'."
@@ -100,13 +109,26 @@ def play_game(word, word_spaces, spaces)
     guess = gets.chomp
 
     if guess == 'save'
+      # insert code to populate game_hash
+      game_hash[:word] = word
+      game_hash[:spaces] = spaces
+      game_hash[:correct_letters] = correct_letters
+      game_hash[:wrong_letters] = wrong_letters
       puts "This game will be saved to continue later."
-      game_hash = Game.new(word, spaces, correct_letters, wrong_letters)
-      game_hash.save
+      puts 'what is the filename?'
+      x = gets.chomp
+      save_file = File.new("#{x}.yaml", 'w+x')
+      save_file.write(game_hash)
       break
+      # game_hash = Game.new(word, spaces, correct_letters, wrong_letters)
+      # game_hash.save
     elsif guess == 'load'
       # make sure saving in one game can be loaded into another 'game session'
-      game_hash.load
+      # game_hash.load
+      puts 'filename?'
+      y = gets.chomp
+      open_file = File.open("#{y}.yaml", 'r')
+      open_file.readline
     end
 
     while correct_letters.include?(guess) || wrong_letters.include?(guess)
@@ -154,7 +176,6 @@ def play_game(word, word_spaces, spaces)
       break
     end
 
-    # puts game_hash
   end
   # end loop
 
