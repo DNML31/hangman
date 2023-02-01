@@ -26,21 +26,6 @@ class Game
     @tries = tries
   end
 
-  # save method needs to serialize an object, not create/rewrite a hash
-  # def save
-  #   @@hash['word'] = @word
-  #   @@hash['spaces'] = @spaces
-  #   @@hash['correct_letters'] = @correct_letters
-  #   @@hash['wrong_letters'] = @wrong_letters
-  #   @@hash['tries'] = @tries
-  #   puts @@hash
-  # end
-
-  # needs to deserialize data
-  # def load
-  #   puts @@hash
-  # end
-
 end
 
 open_txt = File.open('google-10000-english-no-swears.txt')
