@@ -14,30 +14,32 @@ class Word
 end
 
 class Game
-  attr_accessor :word, :spaces, :solve_me, :correct_letters, :wrong_letters
+  attr_accessor :word, :spaces, :solve_me, :correct_letters, :wrong_letters, :tries
   # need to be able to read and write
   @@hash = {}
 
-  def initialize(word, spaces, correct_letters, wrong_letters)
+  def initialize(word, spaces, correct_letters, wrong_letters, tries)
     @word = word
     @spaces = spaces
-    # @solve_me = solve_me
     @correct_letters = correct_letters
     @wrong_letters = wrong_letters
+    @tries = tries
   end
 
-  def save
-    @@hash['word'] = @word
-    @@hash['spaces'] = @spaces
-    # @@hash['solve_me'] = @solve_me
-    @@hash['correct_letters'] = @correct_letters
-    @@hash['wrong_letters'] = @wrong_letters
-    puts @@hash
-  end
+  # save method needs to serialize an object, not create/rewrite a hash
+  # def save
+  #   @@hash['word'] = @word
+  #   @@hash['spaces'] = @spaces
+  #   @@hash['correct_letters'] = @correct_letters
+  #   @@hash['wrong_letters'] = @wrong_letters
+  #   @@hash['tries'] = @tries
+  #   puts @@hash
+  # end
 
-  def load
-    puts @@hash
-  end
+  # needs to deserialize data
+  # def load
+  #   puts @@hash
+  # end
 
 end
 
@@ -78,7 +80,15 @@ def check_guess(spaces_array, word_array, guess)
 
 end
 
-def play_game(word, word_spaces, spaces)
+game_hash = {
+  :word => '',
+  :spaces => '',
+  :correct_letters => '',
+  :wrong_letters => '',
+  :tries => ''
+}
+
+def play_game(word, word_spaces, spaces, game_hash)
   # ("test", _ _ _ _ , 4)
 
   letters = Range.new('a','z').to_a
@@ -100,13 +110,29 @@ def play_game(word, word_spaces, spaces)
     guess = gets.chomp
 
     if guess == 'save'
+      # insert code to populate game_hash
+
+      game_hash[:word] = word
+      game_hash[:spaces] = spaces
+      game_hash[:correct_letters] = correct_letters
+      game_hash[:wrong_letters] = wrong_letters
+      game_hash[:tries] = tries
+
       puts "This game will be saved to continue later."
-      game_hash = Game.new(word, spaces, correct_letters, wrong_letters)
-      game_hash.save
+      puts 'what is the filename?'
+      x = gets.chomp
+      File.open("#{x}.yaml", 'w+x') {|save_file| save_file.write(game_hash)}
       break
+
     elsif guess == 'load'
-      # make sure saving in one game can be loaded into another 'game session'
-      game_hash.load
+      # having issue with loading text from saved file
+      # previously saved file not loaded, new game gets puts
+      puts 'filename?'
+      y = gets.chomp
+      open_file = File.open("#{y}.yaml", 'r')
+      load_hash = open_file.readlines
+      game_hash = load_hash
+      puts game_hash
     end
 
     while correct_letters.include?(guess) || wrong_letters.include?(guess)
@@ -154,10 +180,9 @@ def play_game(word, word_spaces, spaces)
       break
     end
 
-    # puts game_hash
   end
   # end loop
 
 end
 
-play_game(solve_me.word, solve_me.blank_spaces, solve_me.spaces)
+play_game(solve_me.word, solve_me.blank_spaces, solve_me.spaces, game_hash)
