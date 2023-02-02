@@ -13,21 +13,6 @@ class Word
   end
 end
 
-class Game
-  attr_accessor :word, :spaces, :solve_me, :correct_letters, :wrong_letters, :tries
-  # need to be able to read and write
-  @@hash = {}
-
-  def initialize(word, spaces, correct_letters, wrong_letters, tries)
-    @word = word
-    @spaces = spaces
-    @correct_letters = correct_letters
-    @wrong_letters = wrong_letters
-    @tries = tries
-  end
-
-end
-
 open_txt = File.open('google-10000-english-no-swears.txt')
 open_txt = open_txt.readlines(chomp: true) # array
 word = open_txt.sample
@@ -66,36 +51,35 @@ def check_guess(spaces_array, word_array, guess)
 end
 
 game_hash = {
-  :word => '',
-  :spaces => '',
-  :correct_letters => '',
-  :wrong_letters => '',
-  :tries => ''
+  word: '',
+  word_spaces: '',
+  spaces: '',
+  spaces_array: '',
+  tries: '',
+  correct_letters: '',
+  wrong_letters: '',
 }
 
-def play_game(word, word_spaces, spaces, game_hash)
-  # ("test", _ _ _ _ , 4)
+word_array = word.split(//)
+spaces_array = []
+tries = 10
+correct_letters = []
+wrong_letters = []
+spaces.times do spaces_array.push("-") end
+
+def play_game(word, word_spaces, word_array, spaces, spaces_array, tries, 
+  correct_letters, wrong_letters, game_hash)
 
   letters = Range.new('a','z').to_a
   numbers = Range.new('0','9').to_a
-  word_array = word.split(//)
 
-  spaces_array = []
-  spaces.times do spaces_array.push("-") end
-
-  tries = 10
-
-  correct_letters = []
-  wrong_letters = []
-
-  loop do
+  while tries > 0 || word_array != spaces_array do
     print "\n* To save this game type 'save'."
     print "\n** To load a previous game type 'load'."
     print "\nTries left: #{tries}. Guess a letter:  "
     guess = gets.chomp
 
     if guess == 'save'
-      # insert code to populate game_hash
 
       game_hash[:word] = word
       game_hash[:spaces] = spaces
@@ -116,8 +100,11 @@ def play_game(word, word_spaces, spaces, game_hash)
       y = gets.chomp
       open_file = File.open("#{y}.yaml", 'r')
       load_hash = open_file.readlines
-      game_hash = load_hash
-      puts game_hash
+      puts load_hash[:word]
+      # play_game(load_hash[:word], load_hash[:word_spaces].to_i, load_hash[:word_array],
+      #   load_hash[:spaces].to_i, load_hash[:spaces_array], load_hash[:tries].to_i, 
+      #   load_hash[:correct_letters], load_hash[:wrong_letters])
+      # at the end of 'load', start at the loop (line 91)
     end
 
     while correct_letters.include?(guess) || wrong_letters.include?(guess)
@@ -170,4 +157,6 @@ def play_game(word, word_spaces, spaces, game_hash)
 
 end
 
-play_game(solve_me.word, solve_me.blank_spaces, solve_me.spaces, game_hash)
+play_game(solve_me.word, solve_me.blank_spaces, word_array, 
+  solve_me.spaces, spaces_array, tries, correct_letters, wrong_letters, game_hash)
+
