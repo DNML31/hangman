@@ -19,15 +19,24 @@ class Game
     puts "#{@save_hash}"
   end
 
-  def save(hash_obj)
+  def save(obj)
     puts "saving..."
-    YAML.dump File.new(hash_obj)
+
+    save = YAML.dump(obj)
+    puts 'Current game will be saved to play later.'
+    puts 'What will this game be called?'
+    x = gets.chomp
+    File.open("#{x}.yaml", 'w+x') {|save| save.write obj}
+
   end
 
-  def load(yaml_hash)
-    puts "loading..."
-    x = YAML.load(yaml_hash)
-    puts x
+  def load
+    puts 'File name?'
+    x = gets.chomp
+
+    thing = YAML.load File.read("#{x}.yaml", 'r')
+    puts thing
+
   end
 
 end
@@ -76,16 +85,15 @@ def play_game(game_obj)
   numbers = Range.new('0','9').to_a
 
   word_array = game_obj.word.split(//)
+
   spaces_array = []
   game_obj.spaces.times do
-    spaces_array.push("_ ")
+    spaces_array.push("_")
   end
 
   while game_obj.tries > 0 || word_array != spaces_array do
-
-    puts spaces_array.join(' ')
+    puts spaces_array.join('')
     puts "\nincorrect letters - #{game_obj.save_hash[:wrong_letters].uniq.join(' ')}"
-
 
     print "\n* To save this game type 'save'."
     print "\n** To load a previous game type 'load'."
@@ -93,11 +101,14 @@ def play_game(game_obj)
     guess = gets.chomp
 
     if guess == 'save'
-      ###
-    end  
+      game_obj.save(game_obj.save_hash)
+      break
+    end
 
     if guess == 'load'
-      ###
+      game_obj = game_obj.load
+      print game_obj
+      # play_game(game_obj)
     end
 
     while game_obj.save_hash[:correct_letters].include?(guess) || 
@@ -129,18 +140,18 @@ def play_game(game_obj)
     end
 
     if word_array.include?(guess)
-      puts ''
       game_obj.save_hash[:correct_letters].push(guess)
-      # need to add 'guess' to a display
-      # need to add 'guess' to an array to compare to word_array
 
+      word_array.each_with_index do |element, index|
+        if element == guess
+          spaces_array[index] = guess
+        end
+      end
     elsif word_array.none?(guess)
       game_obj.tries -= 1
       game_obj.save_hash[:wrong_letters].push(guess)
     end
 
-
-    # loop condition
     if game_obj.tries == 0
       puts "You lose. The word was #{word_array.join('').upcase}."
       break
@@ -150,7 +161,6 @@ def play_game(game_obj)
     end
 
   end
-  # end loop
 
 end
 
