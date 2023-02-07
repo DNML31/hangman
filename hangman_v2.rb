@@ -10,11 +10,11 @@ class Game
     @tries = 10
 
     @save_hash = {
-      :word => @word,
-      :spaces => @spaces,
-      :tries => @tries,
-      :correct_letters => [],
-      :wrong_letters=> [],
+      "word": @word,
+      "spaces": @spaces,
+      "tries": @tries,
+      "correct_letters": [],
+      "wrong_letters": []
     }
     puts "#{@save_hash}"
   end
@@ -33,10 +33,7 @@ class Game
   def load
     puts 'File name?'
     x = gets.chomp
-
-    thing = YAML.load File.read("#{x}.yaml", 'r')
-    puts thing
-
+    YAML.load File.open("#{x}.yaml", 'r')
   end
 
 end
@@ -51,11 +48,11 @@ end
 spaces = word.length
 
 game_hash = {
-  word: '',
-  spaces: '',
-  tries: '',
-  correct_letters: '',
-  wrong_letters: '',
+  "word": '',
+  "spaces": '',
+  "tries": '',
+  "correct_letters": [],
+  "wrong_letters": []
 }
 
 game_obj = Game.new(word, spaces, game_hash)
@@ -107,7 +104,8 @@ def play_game(game_obj)
 
     if guess == 'load'
       game_obj = game_obj.load
-      print game_obj
+      print game_obj # this is a Hash
+      puts game_obj[:word].class # this is Nilclass
       # play_game(game_obj)
     end
 
