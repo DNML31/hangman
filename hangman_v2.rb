@@ -10,22 +10,27 @@ class Game
     @tries = 10
 
     @save_hash = {
-      "word": @word,
-      "spaces": @spaces,
-      "tries": @tries,
-      "correct_letters": [],
-      "wrong_letters": []
+      'word': @word,
+      'spaces': @spaces,
+      'tries': @tries,
+      'correct_letters': [],
+      'wrong_letters': []
     }
   end
 
   def save(obj)
     puts "saving..."
-
     save = YAML.dump(obj)
     puts 'Current game will be saved to play later.'
     puts 'What will this game be called?'
     x = gets.chomp
-    File.open("#{x}.yaml", 'w+x') {|save| save.write obj}
+    File.open("#{x}.yaml", 'w+x') {|save| save.write obj.to_yaml}
+    
+    # write = YAML::load_file("#{x}.yaml")
+    # require 'yaml' # Built in, no gem required
+    # d = YAML::load_file('/tmp/test.yml') #Load
+    # d['content']['session'] = 2 #Modify
+    # File.open('/tmp/test.yml', 'w') {|f| f.write d.to_yaml } #Store
 
   end
 
@@ -49,11 +54,11 @@ end
 spaces = word.length
 
 game_hash = {
-  "word": '',
-  "spaces": '',
-  "tries": '',
-  "correct_letters": [],
-  "wrong_letters": []
+  'word': '',
+  'spaces': '',
+  'tries': '',
+  'correct_letters': [],
+  'wrong_letters': []
 }
 
 game_obj = Game.new(word, spaces, game_hash)
@@ -106,14 +111,14 @@ def play_game(game_obj)
     if guess == 'load'
       new_obj = game_obj.load
       save_hash = {
-        "word": new_obj["word"],
-        "spaces": new_obj["spaces"],
-        "tries": new_obj["tries"],
-        "correct_letters": new_obj["correct_letters"],
-        "wrong_letters": new_obj["wrong_letters"]
+        'word': new_obj['word'],
+        'spaces': new_obj['spaces'],
+        'tries': new_obj['tries'],
+        'correct_letters': new_obj['correct_letters'],
+        'wrong_letters': new_obj['wrong_letters']
       }
 
-      new_game_obj = Game.new(new_obj["word"], new_obj["spaces"], save_hash)
+      new_game_obj = Game.new(new_obj['word'], new_obj['spaces'], save_hash)
       play_game(new_game_obj)
     end
 
@@ -125,18 +130,18 @@ def play_game(game_obj)
     end
 
     if numbers.include?(guess)
-      puts "Not a letter..."
+      puts 'Not a letter...'
       until letters.include?(guess) do
-        puts "Choose a letter: "
+        puts 'Choose a letter: '
         guess = gets.chomp
       end
     elsif guess.length > 1
       until guess.length == 1 do
-        puts "Choose only ONE letter."
+        puts 'Choose only ONE letter.'
         guess = gets.chomp
 
         until letters.include?(guess) do
-          puts "Choose a letter."
+          puts 'Choose a letter.'
           guess = gets.chomp
         end
       end
@@ -162,7 +167,7 @@ def play_game(game_obj)
       puts "You lose. The word was #{word_array.join('').upcase}."
       break
     elsif word_array == spaces_array
-      puts "You win! You solved the word!"
+      puts 'You win! You solved the word!'
       break
     end
 
@@ -170,7 +175,7 @@ def play_game(game_obj)
 
 end
 
-print "************************"
+print '************************'
 puts "\nLet's play hangman! You will have 10 tries to figure out the word.
 \nInput only ONE alphabetical letter per turn (no numbers or symbols).\n\n"
 
