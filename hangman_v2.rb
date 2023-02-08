@@ -16,7 +16,6 @@ class Game
       "correct_letters": [],
       "wrong_letters": []
     }
-    puts "#{@save_hash}"
   end
 
   def save(obj)
@@ -33,7 +32,9 @@ class Game
   def load
     puts 'File name?'
     x = gets.chomp
-    YAML.load File.open("#{x}.yaml", 'r')
+    data = YAML.load File.open("#{x}.yaml", 'r')
+    data
+    # Game.new(data[@word], data[@spaces], data[@save_hash])
   end
 
 end
@@ -81,7 +82,7 @@ def play_game(game_obj)
   letters = Range.new('a','z').to_a
   numbers = Range.new('0','9').to_a
 
-  word_array = game_obj.word.split(//)
+  word_array = game_obj.save_hash[:word].split(//)
 
   spaces_array = []
   game_obj.spaces.times do
@@ -103,10 +104,17 @@ def play_game(game_obj)
     end
 
     if guess == 'load'
-      game_obj = game_obj.load
-      print game_obj # this is a Hash
-      puts game_obj[:word].class # this is Nilclass
-      # play_game(game_obj)
+      new_obj = game_obj.load
+      save_hash = {
+        "word": new_obj["word"],
+        "spaces": new_obj["spaces"],
+        "tries": new_obj["tries"],
+        "correct_letters": new_obj["correct_letters"],
+        "wrong_letters": new_obj["wrong_letters"]
+      }
+
+      new_game_obj = Game.new(new_obj["word"], new_obj["spaces"], save_hash)
+      play_game(new_game_obj)
     end
 
     while game_obj.save_hash[:correct_letters].include?(guess) || 
