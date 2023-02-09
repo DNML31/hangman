@@ -2,20 +2,20 @@ require 'yaml'
 
 class Game
   attr_reader :word, :spaces
-  attr_accessor :tries, :save_hash
+  attr_accessor :tries, :save_hash, :correct_letters, :wrong_letters
 
-  def initialize(word, spaces, save_hash)
+  def initialize(word, spaces)
     @word = word
     @spaces = spaces
     @tries = 10
+    @correct_letters = []
+    @wrong_letters = []
 
-    @save_hash = {
-      'word': @word,
-      'spaces': @spaces,
-      'tries': @tries,
-      'correct_letters': [],
-      'wrong_letters': []
-    }
+    # @save_hash = {
+    #   'word': @word,
+    #   'spaces': @spaces,
+    #   'tries': @tries,
+    # }
   end
 
   def save(obj)
@@ -24,7 +24,7 @@ class Game
     puts 'Current game will be saved to play later.'
     puts 'What will this game be called?'
     x = gets.chomp
-    File.open("#{x}.yaml", 'w+x') {|save| save.write obj.to_yaml}
+    File.open("#{x}.yaml", 'w+x') {|save| save.write (obj.to_yaml)}
     
     # write = YAML::load_file("#{x}.yaml")
     # require 'yaml' # Built in, no gem required
@@ -53,15 +53,15 @@ end
 
 spaces = word.length
 
-game_hash = {
-  'word': '',
-  'spaces': '',
-  'tries': '',
-  'correct_letters': [],
-  'wrong_letters': []
-}
+# game_hash = {
+#   'word': '',
+#   'spaces': '',
+#   # 'tries': '',
+#   'correct_letters': [],
+#   'wrong_letters': []
+# }
 
-game_obj = Game.new(word, spaces, game_hash)
+game_obj = Game.new(word, spaces)
 
 def check_guess(game_obj, guess)
 
@@ -87,7 +87,7 @@ def play_game(game_obj)
   letters = Range.new('a','z').to_a
   numbers = Range.new('0','9').to_a
 
-  word_array = game_obj.save_hash[:word].split(//)
+  word_array = game_obj.word.split(//)
 
   spaces_array = []
   game_obj.spaces.times do
@@ -96,7 +96,7 @@ def play_game(game_obj)
 
   while game_obj.tries > 0 || word_array != spaces_array do
     puts spaces_array.join('')
-    puts "\nincorrect letters - #{game_obj.save_hash[:wrong_letters].uniq.join(' ')}"
+    puts "\nincorrect letters - #{game_obj.wrong_letters.uniq.join(' ')}"
 
     print "\n* To save this game type 'save'."
     print "\n** To load a previous game type 'load'."
@@ -104,7 +104,7 @@ def play_game(game_obj)
     guess = gets.chomp
 
     if guess == 'save'
-      game_obj.save(game_obj.save_hash)
+      game_obj.save(game_obj)
       break
     end
 
@@ -113,7 +113,7 @@ def play_game(game_obj)
       save_hash = {
         'word': new_obj['word'],
         'spaces': new_obj['spaces'],
-        'tries': new_obj['tries'],
+        # 'tries': new_obj['tries'],
         'correct_letters': new_obj['correct_letters'],
         'wrong_letters': new_obj['wrong_letters']
       }
@@ -122,8 +122,8 @@ def play_game(game_obj)
       play_game(new_game_obj)
     end
 
-    while game_obj.save_hash[:correct_letters].include?(guess) || 
-      game_obj.save_hash[:wrong_letters].include?(guess)
+    while game_obj.correct_letters.include?(guess) || 
+      game_obj.wrong_letters.include?(guess)
 
       puts "\nYou've already guessed this letter. Try another: "
       guess = gets.chomp
@@ -151,7 +151,7 @@ def play_game(game_obj)
     end
 
     if word_array.include?(guess)
-      game_obj.save_hash[:correct_letters].push(guess)
+      game_obj.correct_letters.push(guess)
 
       word_array.each_with_index do |element, index|
         if element == guess
@@ -160,7 +160,7 @@ def play_game(game_obj)
       end
     elsif word_array.none?(guess)
       game_obj.tries -= 1
-      game_obj.save_hash[:wrong_letters].push(guess)
+      game_obj.wrong_letters.push(guess)
     end
 
     if game_obj.tries == 0
