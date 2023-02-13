@@ -2,7 +2,7 @@ require 'yaml'
 
 class Game
   attr_reader :word, :spaces
-  attr_accessor :tries, :save_hash, :correct_letters, :wrong_letters
+  attr_accessor :tries, :correct_letters, :wrong_letters
 
   def initialize(word, spaces)
     @word = word
@@ -10,38 +10,21 @@ class Game
     @tries = 10
     @correct_letters = []
     @wrong_letters = []
-
-    # @save_hash = {
-    #   'word': @word,
-    #   'spaces': @spaces,
-    #   'tries': @tries,
-    # }
   end
 
   def save(obj)
-    puts "saving..."
-    save = YAML.dump(obj)
+    puts 'saving...'
     puts 'Current game will be saved to play later.'
     puts 'What will this game be called?'
     x = gets.chomp
-    File.open("#{x}.yaml", 'w+x') {|save| save.write (obj.to_yaml)}
-    
-    # write = YAML::load_file("#{x}.yaml")
-    # require 'yaml' # Built in, no gem required
-    # d = YAML::load_file('/tmp/test.yml') #Load
-    # d['content']['session'] = 2 #Modify
-    # File.open('/tmp/test.yml', 'w') {|f| f.write d.to_yaml } #Store
-
+    File.open("#{x}.yaml", 'w+x') { |save| save.write(obj.to_yaml) }
   end
 
   def load
     puts 'File name?'
     x = gets.chomp
-    data = YAML.load File.open("#{x}.yaml", 'r')
-    data
-    # Game.new(data[@word], data[@spaces], data[@save_hash])
+    File.open("#{x}.yaml", 'r')
   end
-
 end
 
 open_txt = File.open('google-10000-english-no-swears.txt')
@@ -53,23 +36,14 @@ end
 
 spaces = word.length
 
-# game_hash = {
-#   'word': '',
-#   'spaces': '',
-#   # 'tries': '',
-#   'correct_letters': [],
-#   'wrong_letters': []
-# }
-
 game_obj = Game.new(word, spaces)
 
 def check_guess(game_obj, guess)
-
   word = game_obj.word.split(//)
   # array
+  print "\n**********\n"
 
   if word.include?(guess)
-    print "\n**********\n"
     puts "\nCORRECT.\n"
     word.each_with_index do |element, index|
       if element == guess
@@ -84,8 +58,8 @@ end
 
 def play_game(game_obj)
 
-  letters = Range.new('a','z').to_a
-  numbers = Range.new('0','9').to_a
+  letters = Range.new('a', 'z').to_a
+  numbers = Range.new('0', '9').to_a
 
   word_array = game_obj.word.split(//)
 
@@ -109,17 +83,17 @@ def play_game(game_obj)
     end
 
     if guess == 'load'
-      new_obj = game_obj.load
-      save_hash = {
-        'word': new_obj['word'],
-        'spaces': new_obj['spaces'],
-        # 'tries': new_obj['tries'],
-        'correct_letters': new_obj['correct_letters'],
-        'wrong_letters': new_obj['wrong_letters']
-      }
+      puts 'File name?'
+      x = gets.chomp
+      file = Psych.unsafe_load(File.open("#{x}.yaml", 'r'))
 
-      new_game_obj = Game.new(new_obj['word'], new_obj['spaces'], save_hash)
-      play_game(new_game_obj)
+      # rather than use the two lines below, just use 'file' as assignment to
+      # open the saved file and call play_game on it
+
+      # new_obj = game_obj.load
+      # new_game_obj = Game.new(new_obj[word], new_obj[spaces])
+
+      play_game(file)
     end
 
     while game_obj.correct_letters.include?(guess) || 
@@ -172,7 +146,6 @@ def play_game(game_obj)
     end
 
   end
-
 end
 
 print '************************'
