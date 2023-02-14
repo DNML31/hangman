@@ -92,6 +92,7 @@ def play_game(game_obj)
       x = gets.chomp
       file = Psych.unsafe_load(File.open("#{x}.yaml", 'r'))
       play_game(file)
+      break
     end
 
     while game_obj.correct_letters.include?(guess) || 
