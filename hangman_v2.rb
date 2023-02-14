@@ -40,7 +40,6 @@ game_obj = Game.new(word, spaces)
 
 def check_guess(game_obj, guess)
   word = game_obj.word.split(//)
-  # array
   print "\n**********\n"
 
   if word.include?(guess)
@@ -57,7 +56,6 @@ def check_guess(game_obj, guess)
 end
 
 def play_game(game_obj)
-
   letters = Range.new('a', 'z').to_a
   numbers = Range.new('0', '9').to_a
 
@@ -69,6 +67,13 @@ def play_game(game_obj)
   end
 
   while game_obj.tries > 0 || word_array != spaces_array do
+
+    word_array.each_with_index do |element, index|
+      if game_obj.correct_letters.uniq.include?(element)
+        spaces_array[index] = element
+      end
+    end
+
     puts spaces_array.join('')
     puts "\nincorrect letters - #{game_obj.wrong_letters.uniq.join(' ')}"
 
@@ -86,13 +91,6 @@ def play_game(game_obj)
       puts 'File name?'
       x = gets.chomp
       file = Psych.unsafe_load(File.open("#{x}.yaml", 'r'))
-
-      # rather than use the two lines below, just use 'file' as assignment to
-      # open the saved file and call play_game on it
-
-      # new_obj = game_obj.load
-      # new_game_obj = Game.new(new_obj[word], new_obj[spaces])
-
       play_game(file)
     end
 
